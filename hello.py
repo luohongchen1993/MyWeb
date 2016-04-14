@@ -15,7 +15,7 @@ moment = Moment(app)
 
 
 class NameForm(Form):
-    name = StringField('What is your name?', validators=[Required()])
+    name = StringField('What is your favorite movie?', validators=[Required()])
     submit = SubmitField('Submit')
 
 
