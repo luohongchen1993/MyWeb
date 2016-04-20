@@ -1,7 +1,3 @@
-Flasky
-======
-
-This repository contains the source code examples for my O'Reilly book [Flask Web Development](http://www.flaskbook.com).
-
-The commits and tags in this repository were carefully created to match the sequence in which concepts are presented in the book. Please read the section titled "How to Work with the Example Code" in the book's preface for instructions.
-
+I use this repo to store the code I played around when I read the book on Flasky Web Development.
+Some code are copied from https://github.com/miguelgrinberg/flasky.
+Up to date I did a little bit twisting in the dead-simple "Text Mining" part, which came from my Python programming class homework, and I just tried to integrate it into this little web app.
