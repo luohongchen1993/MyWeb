@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, session, redirect, url_for, flash
 from flask.ext.script import Manager
 from flask.ext.bootstrap import Bootstrap
 from flask.ext.moment import Moment
@@ -38,12 +38,20 @@ def internal_server_error(e):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    name = None
+    # name = None    # now we don't need this
     form = NameForm()
     if form.validate_on_submit():
-        name = form.name.data
-        form.name.data = ''
-    return render_template('index.html', form=form, name=name,current_time=datetime.utcnow())
+        # 4a
+		# session['name'] = form.name.data 
+        # return redirect(url_for('index'))
+		old_name = session.get('name') # might be None
+		if old_name is not None and old_name != form.name.data:
+			flash('Looks like you have changed your name!')
+		session['name'] = form.name.data
+		form.name.data = ''
+		return redirect(url_for('index'))
+		
+    return render_template('index.html', form=form, name=session.get('name'),current_time=datetime.utcnow())
 
 def text_mining_engine(textdata):
 	positive = ['love', 'like', 'enjoy', 'good', 'happy', 'great', 'wonderful', 'terrific', 'cool', 'best']
@@ -67,17 +75,25 @@ def text_mining_engine(textdata):
 	
 @app.route('/textmining', methods=['GET', 'POST'])
 def textmining():
-	text = None
-	pos_count = None
-	neg_count = None
+	#text = None
+	#pos_count = None
+	#neg_count = None
 	form = TextForm()
 	if form.validate_on_submit():
-		text = form.text.data
-		form.text.data = ''
-		textdata = text
+		#text = form.text.data
+		#form.text.data = ''
+		oldtext = session.get('text')
+		if oldtext is not None and oldtext != form.text.data:
+			flash('We are now analyzing new text data!')
+		textdata = form.text.data
 		pos_count,neg_count = text_mining_engine(textdata)
+		session['text'] = form.text.data
+		session['pos'] = pos_count
+		session['neg'] = neg_count
+		form.text.data = ''
+		return redirect(url_for('textmining'))
 		
-	return render_template('textmining.html', form=form,text=text, pos_count=pos_count,neg_count=neg_count,current_time=datetime.utcnow())
+	return render_template('textmining.html', form=form,text=session.get('text'), pos_count=session.get('pos'),neg_count=session.get('neg'),current_time=datetime.utcnow())
 
 
 if __name__ == '__main__':
